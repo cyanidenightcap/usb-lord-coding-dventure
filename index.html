@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>USB Lord: Code Mastery Journey</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ff88">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .code-editor, .code-editor * {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #0a0a0f;
+            color: #00ff88;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Mobile-optimized animated circuit background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.08) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 49%, rgba(0, 255, 136, 0.02) 50%, transparent 51%);
+            background-size: 50px 50px;
+            animation: circuitFlow 30s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes circuitFlow {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(10px, 10px); }
+        }
+
+        .game-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-shadow: 0 0 15px #00ff88;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #00ffff;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px #00ffff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #00ffff;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-shadow: 0 0 8px #00ff88;
+        }
+
+        .progress-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ffff);
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .panel {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .panel-header {
+            background: linear-gradient(45deg, #001a0f, #003322);
+            padding: 15px;
+            border-bottom: 1px solid #00ff88;
+        }
+
+        .chapter-icon {
+            font-size: 2rem;
+            text-shadow: 0 0 15px #00ffff;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .panel-content {
+            padding: 15px;
+        }
+
+        .reasoning-box {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid #00ffff;
+            padding: 12px 15px;
+            margin: 12px 0;
+            border-radius: 5px;
+            color: #00ffff;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .code-editor {
+            background: #000008;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px; /* Prevents zoom on iOS */
+            color: #00ff88;
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            margin: 12px 0;
+            box-shadow: inset 0 0 15px rgba(0, 255, 136, 0.1);
+            -webkit-appearance: none;
+            border-radius: 8px;
+            line-height: 1.4;
+            tab-size: 2;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        .code-editor-container {
+            position: relative;
+            background: #000008;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+
+        .code-editor-toolbar {
+            background: #001100;
+            border-bottom: 1px solid #00ff88;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .line-numbers {
+            position: absolute;
+            left: 0;
+            top: 40px;
+            bottom: 0;
+            width: 40px;
+            background: #000004;
+            border-right: 1px solid #003300;
+            padding: 15px 5px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            color: #006600;
+            overflow: hidden;
+            line-height: 1.4;
+            white-space: pre;
+        }
+
+        .code-editor-enhanced {
+            background: #000008;
+            border: none;
+            border-radius: 0 0 8px 8px;
+            padding: 15px 15px 15px 50px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            color: #00ff88;
+            width: 100%;
+            min-height: 120px;
+            resize: vertical;
+            box-shadow: none;
+            line-height: 1.4;
+            tab-size: 2;
+            white-space: pre;
+            overflow-wrap: normal;
+            outline: none;
+        }
+
+        .syntax-highlight {
+            position: absolute;
+            top: 40px;
+            left: 50px;
+            right: 0;
+            bottom: 0;
+            padding: 15px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            line-height: 1.4;
+            pointer-events: none;
+            overflow: hidden;
+            white-space: pre;
+            color: transparent;
+        }
+
+        .keyword { color: #ff6b6b; }
+        .string { color: #4ecdc4; }
+        .number { color: #ffe66d; }
+        .comment { color: #666; }
+        .operator { color: #ff8b94; }
+        .function { color: #95e1d3; }
+
+        .usb-simulator {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .usb-ports {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .usb-port {
+            background: #001100;
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .usb-port:hover {
+            background: #002200;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .usb-port.connected {
+            border-color: #00ffff;
+            background: #001122;
+        }
+
+        .usb-port.connected::after {
+            content: "🔌";
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 16px;
+        }
+
+        .offline-indicator {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(255, 165, 0, 0.9);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            display: none;
+            z-index: 1000;
+        }
+
+        .download-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 255, 136, 0.2);
+            border-radius: 2px;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+
+        .download-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ffff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .code-editor:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 
+                inset 0 0 15px rgba(0, 255, 136, 0.2),
+                0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .btn-group.single-col {
+            grid-template-columns: 1fr;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #001100, #003300);
+            border: 2px solid #00ff88;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: #00ff88;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            min-height: 50px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(45deg, #000011, #000033);
+            border-color: #00ffff;
+            color: #00ffff;
+        }
+
+        .btn.secondary:active {
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .btn.danger {
+            background: linear-gradient(45deg, #110000, #330000);
+            border-color: #ff0044;
+            color: #ff0044;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-weight: 700;
+            text-align: center;
+            animation: feedbackPulse 0.5s ease;
+            font-size: 0.9rem;
+        }
+
+        .feedback.success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .feedback.error {
+            background: rgba(255, 0, 68, 0.2);
+            border: 2px solid #ff0044;
+            color: #ff0044;
+            box-shadow: 0 0 15px rgba(255, 0, 68, 0.3);
+        }
+
+        .hint-box {
+            background: rgba(0, 255, 255, 0.1);
+            border-left: 4px solid #00ffff;
+            padding: 12px 15px;
+            margin: 12px 0;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.85rem;
+        }
+
+        .output-terminal {
+            background: #000008;
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.85rem;
+            min-height: 50px;
+            color: #00ffff;
+            box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        .control-panel {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .control-title {
+            color: #00ffff;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            gap: 10px;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 136, 0.9);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            border: 2px solid #00ff88;
+            font-size: 0.8rem;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        .completed-badge {
+            background: rgba(0, 255, 136, 0.3);
+            border: 1px solid #00ff88;
+            border-radius: 12px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            margin-left: 10px;
+            display: inline-block;
+        }
+
+        .chapter-unlock {
+            background: linear-gradient(45deg, #001122, #003355);
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+            animation: chapterPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes chapterPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Mobile-specific optimizations */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 6px;
+            }
+            
+            .stat-item {
+                padding: 8px;
+            }
+            
+            .stat-label {
+                font-size: 0.6rem;
+            }
+            
+            .stat-value {
+                font-size: 1rem;
+            }
+            
+            .panel-content {
+                padding: 12px;
+            }
+            
+            .code-editor {
+                min-height: 100px;
+                font-size: 14px;
+            }
+            
+            .btn {
+                padding: 12px 16px;
+                font-size: 0.8rem;
+                min-height: 45px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 8px;
+            }
+            
+            .title {
+                font-size: 1.3rem;
+            }
+            
+            .panel-content {
+                padding: 10px;
+            }
+            
+            .reasoning-box, .hint-box, .output-terminal {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+        }
+
+        /* Prevent zoom on input focus for iOS */
+        @supports (-webkit-touch-callout: none) {
+            .code-editor {
+                font-size: 16px;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            body::before {
+                background-size: 25px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="save-indicator" id="saveIndicator">⚡ STATE SAVED ⚡</div>
+    
+    <div class="game-container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="title">🔌 USB LORD</div>
+            <div class="subtitle">CODE MASTERY JOURNEY</div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">PROTOCOL</div>
+                    <div class="stat-value" id="questionNumber">001</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">CHAPTER</div>
+                    <div class="stat-value" id="chapterNumber">01</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">ACCESS</div>
+                    <div class="stat-value" id="score">0000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">COMPLETE</div>
+                    <div class="stat-value" id="completedQuestions">000</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="stat-label">MASTERY PROGRESS</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 1%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-title">⚡ SYSTEM CONTROLS</div>
+            <div class="btn-group">
+                <button class="btn secondary" onclick="saveProgress()">💾 SAVE</button>
+                <button class="btn secondary" onclick="loadProgress()">📁 LOAD</button>
+                <button class="btn secondary" onclick="exportProgress()">📤 EXPORT</button>
+                <button class="btn danger" onclick="resetProgress()">🔄 RESET</button>
+            </div>
+        </div>
+
+        <!-- Story Panel -->
+        <div class="panel" id="storyPanel">
+            <div class="panel-header">
+                <div class="chapter-icon">🔌</div>
+                <h2>WELCOME TO THE USB LORD PROTOCOL</h2>
+            </div>
+            <div class="panel-content">
+                <p>You are about to embark on a journey to master the ancient art of USB device control. The USB Lord Protocol requires deep knowledge of JavaScript, hardware communication, and system integration.</p>
+                <p><strong>MISSION OBJECTIVE:</strong> Progress through 10 chapters of increasingly complex protocols to become the ultimate USB Lord.</p>
+            </div>
+        </div>
+
+        <!-- Question Panel -->
+        <div class="panel" id="questionPanel">
+            <div class="panel-header">
+                <div class="chapter-icon">🔧</div>
+                <h3 id="questionTitle">Chapter 01: Basic Protocol Initialization</h3>
+            </div>
+            <div class="panel-content">
+                <p id="questionText">Initialize your first system variable. Create a variable called 'usbPort' and assign it the value 'USB001' to establish the primary connection endpoint.</p>
+                
+                <div class="reasoning-box" id="reasoning">
+                    📖 <strong>USB Lord Protocol Briefing:</strong> Variables are like labeled storage containers in your system's memory. When your USB Lord program needs to remember which port a device is connected to, it stores that information in a named container that can be accessed anytime. In JavaScript, we use the 'let' keyword to create these containers, followed by a name, an equals sign, and the value we want to store in quotes for text.
+                </div>
+                
+                <div class="hint-box" id="hint">
+                    💡 <strong>SYSTEM HINT:</strong> Use 'let usbPort = "USB001";' to create the connection variable.
+                </div>
+
+                <textarea class="code-editor" id="codeEditor" placeholder="// USB LORD PROTOCOL TERMINAL
+// Enter your JavaScript commands here...
+
+let usbPort = 'USB001';"></textarea>
+
+                <div class="btn-group">
+                    <button class="btn" onclick="runCode()">⚡ EXECUTE</button>
+                    <button class="btn" onclick="submitAnswer()">🔍 VALIDATE</button>
+                    <button class="btn secondary" onclick="showHint()">💡 HINT</button>
+                    <button class="btn secondary" onclick="nextQuestion()" id="nextBtn" disabled>➡️ NEXT</button>
+                </div>
+
+                <div class="nav-controls">
+                    <button class="btn secondary" onclick="prevQuestion()" id="prevBtn" disabled>⬅️ PREVIOUS</button>
+                </div>
+
+                <div id="feedback"></div>
+                <div class="output-terminal" id="output">SYSTEM READY - AWAITING COMMANDS...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Code Execution Engine for JavaScript
+        class CodeExecutor {
+            static executeCode(code, testCases = []) {
+                const startTime = performance.now();
+                
+                try {
+                    // Create isolated execution context
+                    const sandbox = {
+                        console: {
+                            log: (...args) => sandbox._output.push(args.join(' ')),
+                            error: (...args) => sandbox._output.push('ERROR: ' + args.join(' '))
+                        },
+                        _output: [],
+                        _result: undefined,
+                        // Add common globals safely
+                        Math: Math,
+                        Date: Date,
+                        parseInt: parseInt,
+                        parseFloat: parseFloat,
+                        isNaN: isNaN
+                    };
+                    
+                    // Execute code in sandbox
+                    const func = new Function('sandbox', `
+                        const {${Object.keys(sandbox).filter(k => k !== '_output' && k !== '_result').join(',')}} = sandbox;
+                        sandbox._output = [];
+                        try {
+                            ${code}
+                            return typeof result !== 'undefined' ? result : sandbox._result;
+                        } catch (e) {
+                            throw new Error('Runtime error: ' + e.message);
+                        }
+                    `);
+                    
+                    const result = func(sandbox);
+                    const endTime = performance.now();
+                    const executionTime = Math.round(endTime - startTime);
+                    
+                    return {
+                        success: true,
+                        result: result,
+                        output: sandbox._output.join('\n'),
+                        executionTime: executionTime,
+                        testsPassed: this.runTests(code, testCases),
+                        totalTests: testCases.length
+                    };
+                } catch (error) {
+                    const endTime = performance.now();
+                    const executionTime = Math.round(endTime - startTime);
+                    
+                    return {
+                        success: false,
+                        error: this.formatError(error.message),
+                        output: '',
+                        executionTime: executionTime,
+                        testsPassed: 0,
+                        totalTests: testCases.length
+                    };
+                }
+            }
+            
+            static formatError(message) {
+                // Provide helpful error messages for common mistakes
+                if (message.includes('is not defined')) {
+                    return message + '\nHint: Make sure you\'ve declared all variables with let, var, or const.';
+                }
+                if (message.includes('Unexpected token')) {
+                    return 'Syntax Error: Check your brackets, parentheses, and semicolons.';
+                }
+                if (message.includes('Cannot read property')) {
+                    return message + '\nHint: Make sure the object exists before accessing its properties.';
+                }
+                return message;
+            }
+            
+            static runTests(code, testCases) {
+                let passed = 0;
+                testCases.forEach(test => {
+                    try {
+                        const testCode = code + `\nresult = ${test.input};`;
+                        const result = this.executeCode(testCode);
+                        if (result.success && result.result === test.expected) {
+                            passed++;
+                        }
+                    } catch (e) {
+                        // Test failed
+                    }
+                });
+                return passed;
+            }
+        }
+
+        // Enhanced Offline Content Manager
+        class OfflineManager {
+            static async initializeDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('USBLordDB', 1);
+                    
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve(request.result);
+                    
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        
+                        if (!db.objectStoreNames.contains('chapters')) {
+                            db.createObjectStore('chapters', { keyPath: 'id' });
+                        }
+                        if (!db.objectStoreNames.contains('progress')) {
+                            db.createObjectStore('progress', { keyPath: 'id' });
+                        }
+                        if (!db.objectStoreNames.contains('userCode')) {
+                            db.createObjectStore('userCode', { keyPath: 'questionId' });
+                        }
+                    };
+                });
+            }
+            
+            static async downloadChapter(chapterNumber) {
+                try {
+                    const db = await this.initializeDB();
+                    const chapter = chapters[chapterNumber];
+                    
+                    if (chapter) {
+                        const transaction = db.transaction(['chapters'], 'readwrite');
+                        const store = transaction.objectStore('chapters');
+                        
+                        await store.put({
+                            id: chapterNumber,
+                            data: chapter,
+                            downloadedAt: Date.now()
+                        });
+                        
+                        // Update downloaded chapters list
+                        const downloaded = await this.getDownloadedChapters();
+                        if (!downloaded.includes(chapterNumber)) {
+                            downloaded.push(chapterNumber);
+                            await MobileStorage.save('downloaded_chapters', downloaded);
+                        }
+                        
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Download failed:', error);
+                }
+                return false;
+            }
+            
+            static async downloadAllChapters() {
+                const totalChapters = Object.keys(chapters).length;
+                let downloadedCount = 0;
+                
+                for (let i = 1; i <= totalChapters; i++) {
+                    if (await this.downloadChapter(i)) {
+                        downloadedCount++;
+                        this.updateDownloadProgress(downloadedCount / totalChapters * 100);
+                    }
+                }
+                
+                return downloadedCount === totalChapters;
+            }
+            
+            static updateDownloadProgress(percent) {
+                const progressFill = document.querySelector('.download-progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = percent + '%';
+                }
+            }
+            
+            static async getDownloadedChapters() {
+                return (await MobileStorage.load('downloaded_chapters')) || [];
+            }
+            
+            static async isChapterAvailable(chapterNumber) {
+                const downloaded = await this.getDownloadedChapters();
+                return downloaded.includes(chapterNumber) || navigator.onLine;
+            }
+            
+            static async loadChapter(chapterNumber) {
+                if (navigator.onLine && chapters[chapterNumber]) {
+                    return chapters[chapterNumber];
+                }
+                
+                try {
+                    const db = await this.initializeDB();
+                    const transaction = db.transaction(['chapters'], 'readonly');
+                    const store = transaction.objectStore('chapters');
+                    const result = await store.get(chapterNumber);
+                    
+                    return result ? result.data : null;
+                } catch (error) {
+                    console.error('Failed to load offline chapter:', error);
+                    return null;
+                }
+            }
+            
+            static async saveUserCode(questionId, code) {
+                try {
+                    const db = await this.initializeDB();
+                    const transaction = db.transaction(['userCode'], 'readwrite');
+                    const store = transaction.objectStore('userCode');
+                    
+                    await store.put({
+                        questionId: questionId,
+                        code: code,
+                        savedAt: Date.now()
+                    });
+                } catch (error) {
+                    console.error('Failed to save user code:', error);
+                }
+            }
+            
+            static async loadUserCode(questionId) {
+                try {
+                    const db = await this.initializeDB();
+                    const transaction = db.transaction(['userCode'], 'readonly');
+                    const store = transaction.objectStore('userCode');
+                    const result = await store.get(questionId);
+                    
+                    return result ? result.code : '';
+                } catch (error) {
+                    console.error('Failed to load user code:', error);
+                    return '';
+                }
+            }
+        }
+
+        // Enhanced Code Editor with Syntax Highlighting
+        class EnhancedCodeEditor {
+            static create(container) {
+                const editorHTML = `
+                    <div class="code-editor-container">
+                        <div class="code-editor-toolbar">
+                            <span>USB Lord Terminal</span>
+                            <div>
+                                <button class="btn" onclick="EnhancedCodeEditor.formatCode()" style="padding: 4px 8px; font-size: 11px;">Format</button>
+                                <button class="btn" onclick="EnhancedCodeEditor.zoomIn()" style="padding: 4px 8px; font-size: 11px;">Zoom +</button>
+                                <button class="btn" onclick="EnhancedCodeEditor.zoomOut()" style="padding: 4px 8px; font-size: 11px;">Zoom -</button>
+                            </div>
+                        </div>
+                        <div class="line-numbers" id="lineNumbers">1</div>
+                        <div class="syntax-highlight" id="syntaxHighlight"></div>
+                        <textarea class="code-editor-enhanced" id="codeEditor" placeholder="// USB LORD PROTOCOL TERMINAL
+// Enter your JavaScript commands here..."></textarea>
+                    </div>
+                `;
+                
+                container.innerHTML = editorHTML;
+                
+                const editor = document.getElementById('codeEditor');
+                const lineNumbers = document.getElementById('lineNumbers');
+                const syntaxHighlight = document.getElementById('syntaxHighlight');
+                
+                let currentFontSize = 16;
+                
+                editor.addEventListener('input', () => {
+                    this.updateLineNumbers(editor, lineNumbers);
+                    this.updateSyntaxHighlighting(editor, syntaxHighlight);
+                    this.saveUserCode();
+                });
+                
+                editor.addEventListener('scroll', () => {
+                    lineNumbers.scrollTop = editor.scrollTop;
+                    syntaxHighlight.scrollTop = editor.scrollTop;
+                });
+                
+                editor.addEventListener('keydown', (e) => {
+                    this.handleKeyDown(e, editor);
+                });
+                
+                // Load saved code for current question
+                this.loadUserCodeForQuestion();
+                
+                return editor;
+            }
+            
+            static updateLineNumbers(editor, lineNumbers) {
+                const lines = editor.value.split('\n').length;
+                let numberText = '';
+                for (let i = 1; i <= lines; i++) {
+                    numberText += i + '\n';
+                }
+                lineNumbers.textContent = numberText;
+            }
+            
+            static updateSyntaxHighlighting(editor, syntaxHighlight) {
+                const code = editor.value;
+                const highlighted = this.highlightSyntax(code);
+                syntaxHighlight.innerHTML = highlighted;
+            }
+            
+            static highlightSyntax(code) {
+                // Basic JavaScript syntax highlighting
+                let highlighted = code;
+                
+                // Keywords
+                const keywords = ['let', 'var', 'const', 'function', 'return', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'class', 'extends', 'import', 'export', 'default'];
+                keywords.forEach(keyword => {
+                    const regex = new RegExp(`\\b(${keyword})\\b`, 'g');
+                    highlighted = highlighted.replace(regex, '<span class="keyword">$1</span>');
+                });
+                
+                // Strings
+                highlighted = highlighted.replace(/(["'])((?:\\.|(?!\1)[^\\\r\n])*?)\1/g, '<span class="string">$1$2$1</span>');
+                
+                // Numbers
+                highlighted = highlighted.replace(/\b(\d+\.?\d*)\b/g, '<span class="number">$1</span>');
+                
+                // Comments
+                highlighted = highlighted.replace(/(\/\/.*$)/gm, '<span class="comment">$1</span>');
+                highlighted = highlighted.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="comment">$1</span>');
+                
+                // Functions
+                highlighted = highlighted.replace(/\b(\w+)(?=\s*\()/g, '<span class="function">$1</span>');
+                
+                // Operators
+                highlighted = highlighted.replace(/([+\-*/%=<>!&|^~?:])/g, '<span class="operator">$1</span>');
+                
+                return highlighted;
+            }
+            
+            static handleKeyDown(e, editor) {
+                // Tab support
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    
+                    editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 2;
+                }
+                
+                // Auto-closing brackets
+                const pairs = {
+                    '(': ')',
+                    '[': ']',
+                    '{': '}',
+                    '"': '"',
+                    "'": "'"
+                };
+                
+                if (pairs[e.key]) {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    const selectedText = editor.value.substring(start, end);
+                    
+                    editor.value = editor.value.substring(0, start) + e.key + selectedText + pairs[e.key] + editor.value.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 1;
+                }
+            }
+            
+            static formatCode() {
+                const editor = document.getElementById('codeEditor');
+                let code = editor.value;
+                
+                // Basic code formatting
+                code = code.replace(/;/g, ';\n');
+                code = code.replace(/\{/g, ' {\n  ');
+                code = code.replace(/\}/g, '\n}\n');
+                code = code.replace(/\n\s*\n/g, '\n');
+                
+                editor.value = code.trim();
+                this.updateLineNumbers(editor, document.getElementById('lineNumbers'));
+                this.updateSyntaxHighlighting(editor, document.getElementById('syntaxHighlight'));
+            }
+            
+            static zoomIn() {
+                const editor = document.getElementById('codeEditor');
+                const lineNumbers = document.getElementById('lineNumbers');
+                const syntaxHighlight = document.getElementById('syntaxHighlight');
+                
+                let currentSize = parseInt(window.getComputedStyle(editor).fontSize);
+                currentSize = Math.min(currentSize + 2, 24);
+                
+                editor.style.fontSize = currentSize + 'px';
+                lineNumbers.style.fontSize = (currentSize - 2) + 'px';
+                syntaxHighlight.style.fontSize = currentSize + 'px';
+            }
+            
+            static zoomOut() {
+                const editor = document.getElementById('codeEditor');
+                const lineNumbers = document.getElementById('lineNumbers');
+                const syntaxHighlight = document.getElementById('syntaxHighlight');
+                
+                let currentSize = parseInt(window.getComputedStyle(editor).fontSize);
+                currentSize = Math.max(currentSize - 2, 12);
+                
+                editor.style.fontSize = currentSize + 'px';
+                lineNumbers.style.fontSize = (currentSize - 2) + 'px';
+                syntaxHighlight.style.fontSize = currentSize + 'px';
+            }
+            
+            static async saveUserCode() {
+                const editor = document.getElementById('codeEditor');
+                if (editor) {
+                    await OfflineManager.saveUserCode(currentQuestion, editor.value);
+                }
+            }
+            
+            static async loadUserCodeForQuestion() {
+                const savedCode = await OfflineManager.loadUserCode(currentQuestion);
+                const editor = document.getElementById('codeEditor');
+                if (editor && savedCode) {
+                    editor.value = savedCode;
+                    this.updateLineNumbers(editor, document.getElementById('lineNumbers'));
+                    this.updateSyntaxHighlighting(editor, document.getElementById('syntaxHighlight'));
+                }
+            }
+        }
+
+        // USB Port Simulator
+        class USBSimulator {
+            static ports = [
+                { id: 1, name: 'USB-A 3.0', connected: false, device: null },
+                { id: 2, name: 'USB-C', connected: false, device: null },
+                { id: 3, name: 'USB-A 2.0', connected: false, device: null },
+                { id: 4, name: 'USB-C Power', connected: false, device: null }
+            ];
+            
+            static devices = [
+                { name: 'Arduino Uno', type: 'microcontroller', power: 20 },
+                { name: 'USB Flash Drive', type: 'storage', power: 5 },
+                { name: 'Webcam', type: 'camera', power: 15 },
+                { name: 'Keyboard', type: 'input', power: 3 },
+                { name: 'External HDD', type: 'storage', power: 25 }
+            ];
+            
+            static initialize() {
+                const simulatorHTML = `
+                    <div class="usb-simulator" id="usbSimulator">
+                        <h3>USB Port Management Interface</h3>
+                        <div class="usb-ports" id="usbPorts"></div>
+                        <div style="margin-top: 15px;">
+                            <button class="btn secondary" onclick="USBSimulator.scanPorts()">Scan Ports</button>
+                            <button class="btn secondary" onclick="USBSimulator.connectRandomDevice()">Simulate Device Connection</button>
+                            <button class="btn secondary" onclick="USBSimulator.disconnectAll()">Disconnect All</button>
+                        </div>
+                        <div id="usbLog" style="background: #000008; padding: 10px; margin-top: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 100px; overflow-y: auto;"></div>
+                    </div>
+                `;
+                
+                const questionPanel = document.getElementById('questionPanel');
+                questionPanel.querySelector('.panel-content').insertAdjacentHTML('beforeend', simulatorHTML);
+                
+                this.renderPorts();
+            }
+            
+            static renderPorts() {
+                const portsContainer = document.getElementById('usbPorts');
+                portsContainer.innerHTML = '';
+                
+                this.ports.forEach(port => {
+                    const portElement = document.createElement('div');
+                    portElement.className = `usb-port ${port.connected ? 'connected' : ''}`;
+                    portElement.innerHTML = `
+                        <div><strong>${port.name}</strong></div>
+                        <div>Port ${port.id}</div>
+                        ${port.connected ? `<div style="color: #00ffff; font-size: 12px;">${port.device.name}</div>` : '<div style="color: #666;">Empty</div>'}
+                    `;
+                    portElement.onclick = () => this.togglePort(port.id);
+                    portsContainer.appendChild(portElement);
+                });
+            }
+            
+            static togglePort(portId) {
+                const port = this.ports.find(p => p.id === portId);
+                if (port.connected) {
+                    this.disconnectDevice(portId);
+                } else {
+                    this.connectDevice(portId);
+                }
+            }
+            
+            static connectDevice(portId) {
+                const port = this.ports.find(p => p.id === portId);
+                const availableDevices = this.devices.filter(d => !this.ports.some(p => p.device && p.device.name === d.name));
+                
+                if (availableDevices.length > 0) {
+                    const randomDevice = availableDevices[Math.floor(Math.random() * availableDevices.length)];
+                    port.connected = true;
+                    port.device = randomDevice;
+                    this.log(`Device connected: ${randomDevice.name} on ${port.name}`);
+                    this.renderPorts();
+                }
+            }
+            
+            static disconnectDevice(portId) {
+                const port = this.ports.find(p => p.id === portId);
+                if (port.connected) {
+                    this.log(`Device disconnected: ${port.device.name} from ${port.name}`);
+                    port.connected = false;
+                    port.device = null;
+                    this.renderPorts();
+                }
+            }
+            
+            static scanPorts() {
+                this.log('Scanning USB ports...');
+                setTimeout(() => {
+                    const connectedCount = this.ports.filter(p => p.connected).length;
+                    this.log(`Scan complete: ${connectedCount} device(s) found`);
+                    this.ports.forEach(port => {
+                        if (port.connected) {
+                            this.log(`  ${port.name}: ${port.device.name} (${port.device.power}mA)`);
+                        }
+                    });
+                }, 1000);
+            }
+            
+            static connectRandomDevice() {
+                const emptyPorts = this.ports.filter(p => !p.connected);
+                if (emptyPorts.length > 0) {
+                    const randomPort = emptyPorts[Math.floor(Math.random() * emptyPorts.length)];
+                    this.connectDevice(randomPort.id);
+                } else {
+                    this.log('No empty ports available');
+                }
+            }
+            
+            static disconnectAll() {
+                this.ports.forEach(port => {
+                    if (port.connected) {
+                        this.disconnectDevice(port.id);
+                    }
+                });
+            }
+            
+            static log(message) {
+                const logContainer = document.getElementById('usbLog');
+                const timestamp = new Date().toLocaleTimeString();
+                logContainer.innerHTML += `<div style="color: #00ff88;">[${timestamp}] ${message}</div>`;
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            static show() {
+                const simulator = document.getElementById('usbSimulator');
+                simulator.style.display = 'block';
+            }
+            
+            static hide() {
+                const simulator = document.getElementById('usbSimulator');
+                simulator.style.display = 'none';
+            }
+        }
+
+        // Network status monitoring
+        class NetworkMonitor {
+            static initialize() {
+                this.updateStatus();
+                
+                window.addEventListener('online', () => {
+                    this.updateStatus();
+                    this.syncOfflineData();
+                });
+                
+                window.addEventListener('offline', () => {
+                    this.updateStatus();
+                });
+            }
+            
+            static updateStatus() {
+                const indicator = document.getElementById('offlineIndicator') || this.createIndicator();
+                
+                if (navigator.onLine) {
+                    indicator.style.display = 'none';
+                } else {
+                    indicator.style.display = 'block';
+                    indicator.textContent = '📡 Offline Mode';
+                }
+            }
+            
+            static createIndicator() {
+                const indicator = document.createElement('div');
+                indicator.id = 'offlineIndicator';
+                indicator.className = 'offline-indicator';
+                document.body.appendChild(indicator);
+                return indicator;
+            }
+            
+            static async syncOfflineData() {
+                // Sync progress when coming back online
+                await USBLordProgress.save();
+                console.log('Synced offline progress');
+            }
+        } wrappedCode = `
+                        (function() {
+                            ${code}
+                            return typeof result !== 'undefined' ? result : _result;
+                        })()
+                    `;
+                    
+                    const func = new Function('sandbox', `
+                        with (sandbox) {
+                            return ${wrappedCode};
+                        }
+                    `);
+                    
+                    sandbox._result = func(sandbox);
+                    
+                    return {
+                        success: true,
+                        result: sandbox._result,
+                        output: sandbox._output.join('\n'),
+                        testsPassed: this.runTests(code, testCases)
+                    };
+                } catch (error) {
+                    return {
+                        success: false,
+                        error: error.message,
+                        output: '',
+                        testsPassed: 0
+                    };
+                }
+            }
+            
+            static runTests(code, testCases) {
+                let passed = 0;
+                testCases.forEach(test => {
+                    try {
+                        const result = this.executeCode(code + `\nresult = ${test.input};`);
+                        if (result.result === test.expected) passed++;
+                    } catch (e) {
+                        // Test failed
+                    }
+                });
+                return passed;
+            }
+        }
+
+        // Offline Content Manager
+        class OfflineManager {
+            static async downloadChapter(chapterNumber) {
+                const chapter = chapters[chapterNumber];
+                if (chapter) {
+                    await MobileStorage.save(`chapter_${chapterNumber}`, chapter);
+                    await MobileStorage.save('downloaded_chapters', 
+                        [...(await this.getDownloadedChapters()), chapterNumber]);
+                    return true;
+                }
+                return false;
+            }
+            
+            static async getDownloadedChapters() {
+                return (await MobileStorage.load('downloaded_chapters')) || [];
+            }
+            
+            static async isChapterAvailable(chapterNumber) {
+                const downloaded = await this.getDownloadedChapters();
+                return downloaded.includes(chapterNumber) || navigator.onLine;
+            }
+            
+            static async loadChapter(chapterNumber) {
+                if (navigator.onLine) {
+                    return chapters[chapterNumber];
+                }
+                return await MobileStorage.load(`chapter_${chapterNumber}`);
+            }
+        }
+
+        // Voice Commands Handler
+        class VoiceCommands {
+            static recognition = null;
+            static isListening = false;
+            
+            static initialize() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'en-US';
+                    
+                    this.recognition.onresult = (event) => {
+                        const command = event.results[0][0].transcript.toLowerCase();
+                        this.processCommand(command);
+                    };
+                    
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.isListening = false;
+                    };
+                    
+                    this.recognition.onend = () => {
+                        this.isListening = false;
+                    };
+                    
+                    return true;
+                }
+                return false;
+            }
+            
+            static startListening() {
+                if (this.recognition && !this.isListening) {
+                    this.isListening = true;
+                    this.recognition.start();
+                    this.showListeningIndicator();
+                }
+            }
+            
+            static processCommand(command) {
+                const feedback = document.getElementById("feedback");
+                
+                if (command.includes('hint') || command.includes('help')) {
+                    showHint();
+                    this.speak("Here's a hint for the current question");
+                } else if (command.includes('run code') || command.includes('execute')) {
+                    runCode();
+                    this.speak("Running your code");
+                } else if (command.includes('next question') || command.includes('next')) {
+                    if (!document.getElementById('nextBtn').disabled) {
+                        nextQuestion();
+                        this.speak("Moving to next question");
+                    }
+                } else if (command.includes('explain') && command.includes('usb')) {
+                    this.speak("USB stands for Universal Serial Bus, a standard for connecting devices to computers");
+                } else {
+                    feedback.innerHTML = `<div style="color: #00ffff; padding: 10px;">
+                        Voice command received: "${command}"<br>
+                        Try saying: "hint", "run code", "next question", or "explain USB"
+                    </div>`;
+                }
+            }
+            
+            static speak(text) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.8;
+                    utterance.pitch = 1.0;
+                    speechSynthesis.speak(utterance);
+                }
+            }
+            
+            static showListeningIndicator() {
+                const indicator = document.createElement('div');
+                indicator.id = 'voice-indicator';
+                indicator.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0, 255, 136, 0.9);
+                    color: #000;
+                    padding: 20px;
+                    border-radius: 15px;
+                    z-index: 10000;
+                    font-weight: bold;
+                    animation: pulse 1s infinite;
+                `;
+                indicator.innerHTML = '🎤 Listening...';
+                document.body.appendChild(indicator);
+                
+                setTimeout(() => {
+                    const el = document.getElementById('voice-indicator');
+                    if (el) el.remove();
+                }, 3000);
+            }
+        }
+
+        // Enhanced mobile storage with better error handling
+        class MobileStorage {
+            static async save(key, data) {
+                try {
+                    // Try localStorage first
+                    if (typeof Storage !== 'undefined' && localStorage) {
+                        localStorage.setItem(key, JSON.stringify(data));
+                        return;
+                    }
+                } catch (error) {
+                    console.warn('localStorage not available:', error.message);
+                }
+                
+                // Fallback to memory storage
+                if (!window._memoryStorage) {
+                    window._memoryStorage = {};
+                }
+                window._memoryStorage[key] = data;
+            }
+            
+            static async load(key) {
+                try {
+                    // Try localStorage first
+                    if (typeof Storage !== 'undefined' && localStorage) {
+                        const data = localStorage.getItem(key);
+                        return data ? JSON.parse(data) : null;
+                    }
+                } catch (error) {
+                    console.warn('localStorage read failed:', error.message);
+                }
+                
+                // Fallback to memory storage
+                if (window._memoryStorage && window._memoryStorage[key]) {
+                    return window._memoryStorage[key];
+                }
+                
+                return null;
+            }
+            
+            static async remove(key) {
+                try {
+                    if (typeof Storage !== 'undefined' && localStorage) {
+                        localStorage.removeItem(key);
+                    }
+                } catch (error) {
+                    console.warn('localStorage remove failed:', error.message);
+                }
+                
+                if (window._memoryStorage) {
+                    delete window._memoryStorage[key];
+                }
+            }
+        }
+
+        // Game State Variables
+        let currentQuestion = 1;
+        let currentChapter = 1;
+        let score = 0;
+        let totalQuestions = 100;
+        let completedQuestions = new Set();
+        let gameStartTime = Date.now();
+
+        // Mobile-optimized Progress Management
+        class USBLordProgress {
+            static async save() {
+                const progress = {
+                    currentQuestion,
+                    currentChapter,
+                    score,
+                    completedQuestions: Array.from(completedQuestions),
+                    gameStartTime,
+                    savedAt: Date.now(),
+                    version: '2.0'
+                };
+                
+                await MobileStorage.save('usbLordProgress', progress);
+                
+                const indicator = document.getElementById('saveIndicator');
+                indicator.classList.add('show');
+                setTimeout(() => indicator.classList.remove('show'), 2000);
+                
+                console.log('USB Lord Progress Saved:', progress);
+                return progress;
+            }
+            
+            static async load() {
+                const progress = await MobileStorage.load('usbLordProgress');
+                if (progress && progress.version) {
+                    currentQuestion = progress.currentQuestion;
+                    currentChapter = progress.currentChapter;
+                    score = progress.score;
+                    completedQuestions = new Set(progress.completedQuestions);
+                    gameStartTime = progress.gameStartTime;
+                    
+                    displayQuestion();
+                    updateStats();
+                    
+                    console.log('USB Lord Progress Loaded:', progress);
+                    return true;
+                }
+                return false;
+            }
+            
+            static async reset() {
+                if (confirm('⚠️ SYSTEM RESET WARNING ⚠️\n\nThis will permanently delete all progress and cannot be undone.\n\nProceed with system reset?')) {
+                    currentQuestion = 1;
+                    currentChapter = 1;
+                    score = 0;
+                    completedQuestions.clear();
+                    gameStartTime = Date.now();
+                    await MobileStorage.remove('usbLordProgress');
+                    
+                    displayQuestion();
+                    updateStats();
+                    
+                    console.log('USB Lord System Reset Complete');
+                }
+            }
+            
+            static async export() {
+                const progress = await this.save();
+                const dataStr = JSON.stringify(progress, null, 2);
+                
+                // Try mobile file system first
+                if (window.Capacitor && window.Capacitor.Plugins.Filesystem) {
+                    try {
+                        const fileName = `usb-lord-progress-${new Date().toISOString().split('T')[0]}.json`;
+                        await window.Capacitor.Plugins.Filesystem.writeFile({
+                            path: fileName,
+                            data: dataStr,
+                            directory: window.Capacitor.Plugins.Filesystem.Directory.Documents,
+                        });
+                        alert(`Progress exported to Documents/${fileName}`);
+                        return;
+                    } catch (error) {
+                        console.warn('Mobile export failed, trying web method:', error);
+                    }
+                }
+                
+                // Fallback to web download
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `usb-lord-progress-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                console.log('Progress exported via web download');
+            }
+        }
+
+        // Question data (same as before, included first few for testing)
+        const chapters = {
+            1: {
+                title: "Chapter 01: Basic Protocol Initialization",
+                character: "🔧",
+                story: "Master the fundamentals of system variables and data storage. These are the building blocks of USB device communication.",
+                questions: [
+                    {
+                        title: "USB Port Variable",
+                        text: "Initialize your first system variable. Create a variable called 'usbPort' and assign it the value 'USB001' to establish the primary connection endpoint.",
+                        reasoning: "Variables are like labeled storage containers in your system's memory. When your USB Lord program needs to remember which port a device is connected to, it stores that information in a named container that can be accessed anytime. In JavaScript, we use the 'let' keyword to create these containers, followed by a name, an equals sign, and the value we want to store in quotes for text.",
+                        solution: "let usbPort = 'USB001';",
+                        test: (code) => code.includes("usbPort") && (code.includes("'USB001'") || code.includes('"USB001"'))
+                    },
+                    {
+                        title: "Device Status Flag",
+                        text: "Create a boolean variable 'deviceConnected' and set it to false to indicate no device is currently connected.",
+                        reasoning: "Boolean variables store true/false values - they're like digital switches that are either ON or OFF. Your USB Lord system needs to track connection states, and booleans are perfect for this. Unlike text or numbers, boolean values (true/false) don't need quotes because they're special JavaScript keywords that represent binary states.",
+                        hint: "Boolean values don't need quotes: let deviceConnected = false;",
+                        solution: "let deviceConnected = false;",
+                        test: (code) => code.includes("deviceConnected") && code.includes("false")
+                    },
+                    {
+                        title: "Connection Speed",
+                        text: "Store the USB connection speed. Create a variable 'connectionSpeed' with the value 480 (representing 480 Mbps).",
+                        reasoning: "Numbers in programming are used for calculations, comparisons, and measurements. Your USB Lord system needs to track device speeds to optimize performance. JavaScript treats numbers as a distinct data type - unlike text, numbers don't need quotes because the system recognizes them as mathematical values that can be used in calculations.",
+                        hint: "Numbers don't need quotes: let connectionSpeed = 480;",
+                        solution: "let connectionSpeed = 480;",
+                        test: (code) => code.includes("connectionSpeed") && code.includes("480")
+                    }
+                    // Add more questions here as needed
+                ]
+            }
+            // Add more chapters here
+        };
+
+        // Core Game Functions - Mobile Optimized
+        function getCurrentQuestionData() {
+            const chapter = chapters[currentChapter];
+            if (!chapter) return null;
+            const questionIndex = (currentQuestion - 1) % 10;
+            return chapter.questions[questionIndex];
+        }
+
+        function displayQuestion() {
+            const chapter = chapters[currentChapter];
+            const questionData = getCurrentQuestionData();
+            
+            if (!chapter || !questionData) {
+                showGameComplete();
+                return;
+            }
+            
+            // Update question title with completion status
+            const completionBadge = completedQuestions.has(currentQuestion) 
+                ? '<span class="completed-badge">✅ MASTERED</span>' 
+                : '';
+            document.getElementById("questionTitle").innerHTML = chapter.title + completionBadge;
+            
+            // Update question content
+            document.getElementById("questionText").textContent = questionData.text;
+            
+            // Add reasoning section
+            const existingReasoning = document.getElementById("reasoning");
+            if (existingReasoning) {
+                existingReasoning.remove();
+            }
+            
+            if (questionData.reasoning) {
+                const reasoningDiv = document.createElement("div");
+                reasoningDiv.id = "reasoning";
+                reasoningDiv.className = "reasoning-box";
+                reasoningDiv.innerHTML = `📖 <strong>USB Lord Protocol Briefing:</strong> ${questionData.reasoning}`;
+                
+                const questionTextElement = document.getElementById("questionText");
+                questionTextElement.parentNode.insertBefore(reasoningDiv, questionTextElement.nextSibling);
+            }
+            
+            document.getElementById("hint").innerHTML = `💡 <strong>SYSTEM HINT:</strong> ${questionData.hint}`;
+            document.getElementById("hint").style.display = "none";
+            document.getElementById("codeEditor").value = "";
+            document.getElementById("feedback").innerHTML = "";
+            document.getElementById("output").innerHTML = "SYSTEM READY - AWAITING COMMANDS...";
+            document.getElementById("nextBtn").disabled = !completedQuestions.has(currentQuestion);
+            
+            // Update chapter info for new chapters
+            if ((currentQuestion - 1) % 10 === 0) {
+                document.querySelector(".chapter-icon").textContent = chapter.character;
+                document.querySelector(".panel-header h2").textContent = "CHAPTER " + String(currentChapter).padStart(2, '0') + " INITIATED";
+                
+                // Update story panel
+                const storyContent = document.querySelector("#storyPanel .panel-content");
+                storyContent.innerHTML = `
+                    <h3>${chapter.title}</h3>
+                    <p>${chapter.story}</p>
+                    <p><strong>STATUS:</strong> Protocol ${currentQuestion} of ${totalQuestions} | Chapter ${currentChapter} of 10</p>
+                `;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById("questionNumber").textContent = String(currentQuestion).padStart(3, '0');
+            document.getElementById("chapterNumber").textContent = String(currentChapter).padStart(2, '0');
+            document.getElementById("score").textContent = String(score).padStart(4, '0');
+            document.getElementById("completedQuestions").textContent = String(completedQuestions.size).padStart(3, '0');
+            
+            const progress = Math.max(1, (completedQuestions.size / totalQuestions) * 100);
+            document.getElementById("progressFill").style.width = progress + "%";
+            
+            // Update navigation buttons
+            document.getElementById("prevBtn").disabled = currentQuestion === 1;
+        }
+
+        function runCode() {
+            const code = document.getElementById("codeEditor").value;
+            const outputDiv = document.getElementById("output");
+            
+            try {
+                const result = eval(code);
+                outputDiv.innerHTML = `<div style="color: #00ff88;">
+                    <strong>⚡ EXECUTION SUCCESS</strong><br>
+                    ${result !== undefined ? 'OUTPUT: ' + result : 'COMMANDS PROCESSED'}
+                </div>`;
+            } catch (error) {
+                outputDiv.innerHTML = `<div style="color: #ff0044;">
+                    <strong>❌ SYSTEM ERROR</strong><br>
+                    ERROR: ${error.message}
+                </div>`;
+            }
+        }
+
+        function submitAnswer() {
+            const code = document.getElementById("codeEditor").value.trim();
+            const questionData = getCurrentQuestionData();
+            const feedbackDiv = document.getElementById("feedback");
+            
+            if (!questionData) return;
+            
+            if (questionData.test(code)) {
+                const wasCompleted = completedQuestions.has(currentQuestion);
+                completedQuestions.add(currentQuestion);
+                
+                if (!wasCompleted) {
+                    score += 100;
+                    feedbackDiv.innerHTML = `<div class="feedback success">
+                        ⚡ PROTOCOL VALIDATED ⚡<br>
+                        +100 ACCESS POINTS
+                    </div>`;
+                } else {
+                    feedbackDiv.innerHTML = `<div class="feedback success">
+                        ✅ PROTOCOL CONFIRMED
+                    </div>`;
+                }
+                
+                document.getElementById("nextBtn").disabled = false;
+                USBLordProgress.save(); // Auto-save on success
+            } else {
+                feedbackDiv.innerHTML = `<div class="feedback error">
+                    ❌ VALIDATION FAILED<br>
+                    <small style="color: #00ffff;">Expected: ${questionData.solution}</small>
+                </div>`;
+            }
+            
+            updateStats();
+        }
+
+        function showHint() {
+            const hintDiv = document.getElementById("hint");
+            hintDiv.style.display = hintDiv.style.display === "none" ? "block" : "none";
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                
+                // Check for chapter advancement
+                if (currentQuestion % 10 === 1 && currentQuestion > 1) {
+                    currentChapter++;
+                    if (chapters[currentChapter]) {
+                        showChapterUnlock();
+                        return;
+                    }
+                }
+                
+                displayQuestion();
+                updateStats();
+                USBLordProgress.save();
+            } else {
+                showGameComplete();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                currentChapter = Math.ceil(currentQuestion / 10);
+                displayQuestion();
+                updateStats();
+                USBLordProgress.save();
+            }
+        }
+
+        function showChapterUnlock() {
+            const chapter = chapters[currentChapter];
+            if (chapter) {
+                document.getElementById("questionPanel").innerHTML = `
+                    <div class="chapter-unlock">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">${chapter.character}</div>
+                        <h2>⚡ CHAPTER ${String(currentChapter).padStart(2, '0')} UNLOCKED ⚡</h2>
+                        <h3>${chapter.title}</h3>
+                        <p style="margin: 15px 0;">${chapter.story}</p>
+                        <button class="btn" onclick="continueToChapter()" style="margin-top: 20px;">INITIALIZE PROTOCOLS</button>
+                    </div>
+                `;
+            }
+        }
+
+        function continueToChapter() {
+            displayQuestion();
+        }
+
+        function showGameComplete() {
+            const playTime = Math.floor((Date.now() - gameStartTime) / 1000 / 60);
+            const completionRate = (completedQuestions.size / totalQuestions * 100).toFixed(1);
+            
+            document.getElementById("questionPanel").innerHTML = `
+                <div class="chapter-unlock">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">👑</div>
+                    <h2>⚡ USB LORD MASTERY COMPLETE ⚡</h2>
+                    <div style="margin: 20px 0; padding: 15px; background: rgba(0, 255, 136, 0.1); border: 2px solid #00ff88; border-radius: 10px;">
+                        <p><strong>FINAL ACCESS LEVEL:</strong> ${score.toLocaleString()}</p>
+                        <p><strong>PROTOCOLS MASTERED:</strong> ${completedQuestions.size}/${totalQuestions} (${completionRate}%)</p>
+                        <p><strong>RUNTIME:</strong> ${playTime} minutes</p>
+                    </div>
+                    <div class="btn-group single-col" style="margin-top: 20px;">
+                        <button class="btn" onclick="exportProgress()">📤 EXPORT RECORD</button>
+                        <button class="btn secondary" onclick="resetProgress()">🔄 RESTART</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Progress control functions
+        async function saveProgress() {
+            await USBLordProgress.save();
+        }
+
+        async function loadProgress() {
+            if (await USBLordProgress.load()) {
+                alert('⚡ Progress Restored! ⚡');
+            } else {
+                alert('❌ No saved progress found.');
+            }
+        }
+
+        async function resetProgress() {
+            await USBLordProgress.reset();
+        }
+
+        async function exportProgress() {
+            await USBLordProgress.export();
+        }
+
+        // Mobile-optimized event handlers
+        let touchStartTime = 0;
+        
+        // Prevent double-tap zoom
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - touchStartTime < 500) {
+                e.preventDefault();
+            }
+            touchStartTime = now;
+        }, false);
+
+        // Handle mobile keyboard
+        const codeEditor = document.getElementById('codeEditor');
+        codeEditor.addEventListener('focus', function() {
+            // Scroll to editor on mobile when focused
+            setTimeout(() => {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+
+        // Auto-save system - less frequent on mobile to save battery
+        setInterval(async () => {
+            await USBLordProgress.save();
+        }, 60000); // Save every minute instead of 30 seconds
+
+        // Initialize game
+        window.addEventListener('load', async function() {
+            if (!(await USBLordProgress.load())) {
+                displayQuestion();
+                updateStats();
+            }
+        });
+
+        // Handle app lifecycle for mobile
+        document.addEventListener('visibilitychange', async function() {
+            if (document.visibilityState === 'hidden') {
+                await USBLordProgress.save();
+            }
+        });
+
+        // Auto-save on page unload
+        window.addEventListener('beforeunload', async function() {
+            await USBLordProgress.save();
+        });
+
+        // Service Worker Registration with error handling
+        if ('serviceWorker' in navigator && location.protocol === 'https:' && location.hostname !== 'www.claudeusercontent.com') {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker not available in this environment');
+                    });
+            });
+        }
+
+        // Initialize the game when script loads
+        displayQuestion();
+        updateStats();
+    </script>
+</body>
+</html>
